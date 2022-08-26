@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name=viewport content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Liglol</title>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+        }
+
+        #golel {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+        }
+
+        #niglal {
+            flex-grow: 1;
+        }
+    </style>
+    <script>
+        function stayAwake() {
+            let wakeLock = null;
+
+            if (!('wakeLock' in navigator)) {
+                document.getElementById('wakeStatus').textContent = 'unavailable';
+                return;
+            }
+
+            async function preventSleeping() {
+                try {
+                    wakeLock = await navigator.wakeLock.request('screen');
+                    document.getElementById('wakeStatus').textContent = 'locked';
+                    wakeLock.addEventListener('release', () => {
+                        document.getElementById('wakeStatus').textContent = 'released';
+                        wakeLock = null;
+                    });
+                } catch (err) {
+                    document.getElementById('wakeStatus').textContent = 'error';
+                }
+            }
+
+            preventSleeping();
+            document.addEventListener('visibilitychange', () => {
+                if (wakeLock !== null && document.visibilityState === 'visible') {
+                    preventSleeping();
+                }
+            });
+
+            document.getElementById('wakeStatus').textContent = 'preparing';
+        }
+
+        const INTERVAL_MS = 20;
+        let intervalId = null;
+        let scrollPixelsPerInterval = 0;
+        let pixelsCollected = 0;
+
+        function scrollIframe() {
+            pixelsCollected += scrollPixelsPerInterval;
+            const scrollPixels = Math.trunc(pixelsCollected);
+            if (scrollPixels === 0)
+                return;
+            pixelsCollected -= scrollPixels;
+
+            const iframe = document.getElementById('niglal');
+            iframe.contentWindow.scrollBy(0, scrollPixels);
+            // console.log([iframe.contentWindow.innerHeight, iframe.contentWindow.scrollY, iframe.offsetHeight])
+            if ((iframe.contentWindow.innerHeight + iframe.contentWindow.scrollY) >= iframe.contentWindow.offsetHeight) {
+                console.log('done');
+                intervalId = null;
+                window.clearInterval(intervalId);
+            }
+        }
+
+        function init() {
+            stayAwake();
+            document.getElementById('glila').addEventListener('input', function(ev) {
+                const scrollSpeed = parseFloat(event.target.value);  // pixels per second
+
+                if (scrollSpeed < 1) {
+                    scrollPixelsPerInterval = 0;
+                    pixelsCollected = 0;
+                    console.log([scrollSpeed, scrollPixelsPerInterval]);
+                    if (intervalId !== null) {
+                        intervalId = null;
+                        window.clearInterval(intervalId);
+                    }
+                } else {
+                    scrollPixelsPerInterval = scrollSpeed * INTERVAL_MS / 1000;
+                    console.log([scrollSpeed, scrollPixelsPerInterval]);
+                    if (intervalId === null) {
+                        intervalId = window.setInterval(scrollIframe, INTERVAL_MS);
+                    }
+                }
+            });
+        }
+    </script>
+</head>
+<body onload="init()">
+    <div id="golel">
+        <span id="wakeStatus">unknown</span>
+        ⏸︎ <input type="range" id="glila" min="0" max="30" step="any" value="0"> ⏩︎
+    </div>
+    <!-- <iframe id="niglal" src="https://www.tab4u.com/tabs/songs/1625_%D7%99%D7%96%D7%94%D7%A8_%D7%90%D7%A9%D7%93%D7%95%D7%AA_-_%D7%A6%D7%99%D7%9C%D7%95_%D7%A9%D7%9C_%D7%99%D7%95%D7%9D_%D7%A7%D7%99%D7%A5.html"></iframe> -->
+    <iframe id="niglal" src="text.html"></iframe>
+</body>
+</html>
