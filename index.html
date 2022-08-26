@@ -17,6 +17,8 @@
             flex-direction: column;
         }
 
+        #wakeStatus {display: none;}
+
         #golel {
             display: flex;
             flex-direction: row;
@@ -66,7 +68,7 @@
 
         function scrollIframe() {
             pixelsCollected += scrollPixelsPerInterval;
-            const scrollPixels = Math.trunc(pixelsCollected);
+            const scrollPixels = Math.trunc(pixelsCollected * 8) / 8;
             if (scrollPixels === 0)
                 return;
             pixelsCollected -= scrollPixels;
