@@ -64,17 +64,10 @@
         const INTERVAL_MS = 20;
         let intervalId = null;
         let scrollPixelsPerInterval = 0;
-        let pixelsCollected = 0;
 
         function scrollIframe() {
-            pixelsCollected += scrollPixelsPerInterval;
-            const scrollPixels = Math.trunc(pixelsCollected * 8) / 8;
-            if (scrollPixels === 0)
-                return;
-            pixelsCollected -= scrollPixels;
-
             const iframe = document.getElementById('niglal');
-            iframe.contentWindow.scrollBy(0, scrollPixels);
+            iframe.contentWindow.scrollBy(0, scrollPixelsPerInterval);
             // console.log([iframe.contentWindow.innerHeight, iframe.contentWindow.scrollY, iframe.offsetHeight])
             if ((iframe.contentWindow.innerHeight + iframe.contentWindow.scrollY) >= iframe.contentWindow.offsetHeight) {
                 console.log('done');
@@ -90,15 +83,12 @@
 
                 if (scrollSpeed < 1) {
                     scrollPixelsPerInterval = 0;
-                    pixelsCollected = 0;
-                    console.log([scrollSpeed, scrollPixelsPerInterval]);
                     if (intervalId !== null) {
                         intervalId = null;
                         window.clearInterval(intervalId);
                     }
                 } else {
                     scrollPixelsPerInterval = scrollSpeed * INTERVAL_MS / 1000;
-                    console.log([scrollSpeed, scrollPixelsPerInterval]);
                     if (intervalId === null) {
                         intervalId = window.setInterval(scrollIframe, INTERVAL_MS);
                     }
